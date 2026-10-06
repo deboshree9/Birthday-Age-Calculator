@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Age Calculator</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            color: #333;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #667eea;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5568d9;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f3f4ff;
+            text-align: center;
+            display: none;
+        }
+
+        .result h2 {
+            color: #667eea;
+            margin: 0 0 15px;
+        }
+
+        .age {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .error {
+            color: #d63031;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎂 Birthday Age Calculator</h1>
+    <p class="subtitle">Calculate your exact age</p>
+
+    <label for="birthDate">Date of Birth</label>
+    <input type="date" id="birthDate">
+
+    <label for="todayDate">Today's Date</label>
+    <input type="date" id="todayDate">
+
+    <button onclick="calculateAge()">Calculate My Age</button>
+
+    <div class="error" id="error"></div>
+
+    <div class="result" id="result">
+        <h2>Your Age Is</h2>
+        <div class="age" id="ageResult"></div>
+    </div>
+
+</div>
+
+<script>
+    // Automatically put today's date in the Today's Date field
+    const today = new Date();
+
+    const todayString =
+        today.getFullYear() + "-" +
+        String(today.getMonth() + 1).padStart(2, "0") + "-" +
+        String(today.getDate()).padStart(2, "0");
+
+    document.getElementById("todayDate").value = todayString;
+
+
+    function calculateAge() {
+
+        const birthInput = document.getElementById("birthDate").value;
+        const todayInput = document.getElementById("todayDate").value;
+
+        const error = document.getElementById("error");
+        const result = document.getElementById("result");
+
+        error.style.display = "none";
+        result.style.display = "none";
+
+        if (birthInput === "" || todayInput === "") {
+            error.innerText = "Please select both dates.";
+            error.style.display = "block";
+            return;
+        }
+
+        const birth = new Date(birthInput + "T00:00:00");
+        const current = new Date(todayInput + "T00:00:00");
+
+        if (birth > current) {
+            error.innerText = "Birth date cannot be after today's date.";
+            error.style.display = "block";
+            return;
+        }
+
+        let birthDay = birth.getDate();
+        let birthMonth = birth.getMonth() + 1;
+        let birthYear = birth.getFullYear();
+
+        let currentDay = current.getDate();
+        let currentMonth = current.getMonth() + 1;
+        let currentYear = current.getFullYear();
+
+        // Calculate days
+        if (currentDay < birthDay) {
+            currentDay += new Date(
+                currentYear,
+                currentMonth - 1,
+                0
+            ).getDate();
+
+            currentMonth--;
+        }
+
+        const days = currentDay - birthDay;
+
+        // Calculate months
+        if (currentMonth < birthMonth) {
+            currentMonth += 12;
+            currentYear--;
+        }
+
+        const months = currentMonth - birthMonth;
+
+        // Calculate years
+        const years = currentYear - birthYear;
+
+        document.getElementById("ageResult").innerText =
+            years + " Years, " +
+            months + " Months, " +
+            days + " Days";
+
+        result.style.display = "block";
+    }
+</script>
+
+</body>
+</html>
